@@ -5,10 +5,11 @@
 #include <math.h>
 #include <time.h>
 #include <errno.h>
+#include <omp.h>   // solo para omp_get_wtime(); compilar con -fopenmp
 
 #define WIDTH 1280
 #define HEIGHT 720
-#define SAMPLES 16
+#define SAMPLES 32
 #define MAX_DEPTH 3
 
 #define NUM_SPHERES 6
@@ -800,7 +801,7 @@ int main(int argc, char *argv[]) {
 
     // INICIO DE MEDICION
 
-    clock_t start = clock();
+    double start = omp_get_wtime();
 
     // BUCLE SERIAL
 
@@ -818,10 +819,7 @@ int main(int argc, char *argv[]) {
 
     // FIN DE MEDICION
 
-    clock_t end = clock();
-
-    double elapsed =
-        (double)(end-start)/CLOCKS_PER_SEC;
+    double elapsed = omp_get_wtime() - start;
 
     printf("\nRenderizado terminado.\n");
 
