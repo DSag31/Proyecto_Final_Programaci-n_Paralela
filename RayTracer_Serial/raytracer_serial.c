@@ -17,9 +17,7 @@
 #define EPSILON 0.0001
 #define PI 3.14159265358979323846
 
-// =====================================================
-// 1. ESTRUCTURAS
-// =====================================================
+//  ESTRUCTURAS
 
 typedef struct {
     double x, y, z;
@@ -69,9 +67,7 @@ typedef struct {
     int hit;
 } HitRecord;
 
-// =====================================================
-// 2. VARIABLES GLOBALES DE LA ESCENA
-// =====================================================
+// VARIABLES GLOBALES DE LA ESCENA
 
 Sphere spheres[NUM_SPHERES];
 int sphere_count = NUM_SPHERES;
@@ -81,9 +77,7 @@ Material materials[NUM_MATERIALS];
 Plane ground;
 PointLight light;
 
-// =====================================================
-// 3. OPERACIONES DE VECTORES
-// =====================================================
+// OPERACIONES DE VECTORES
 
 Vec3 vec3(double x, double y, double z) {
     Vec3 v = {x, y, z};
@@ -147,9 +141,7 @@ Vec3 clamp_color(Vec3 c) {
     return c;
 }
 
-// =====================================================
-// 4. GENERADOR ALEATORIO DETERMINISTA
-// =====================================================
+// GENERADOR ALEATORIO DETERMINISTA
 
 uint32_t hash32(uint32_t x) {
     x ^= x >> 16;
@@ -177,9 +169,7 @@ int random_int(uint32_t *state, int min, int max) {
     );
 }
 
-// =====================================================
-// 5. RAYOS
-// =====================================================
+// RAYOS
 
 Ray make_ray(Vec3 origin, Vec3 direction) {
     Ray r;
@@ -194,9 +184,7 @@ Vec3 ray_at(Ray r, double t) {
     return add(r.origin, mul(r.direction,t));
 }
 
-// =====================================================
-// 6. INTERSECCION RAYO-ESFERA
-// =====================================================
+// INTERSECCION RAYO-ESFERA
 
 int hit_sphere(
     Ray ray,
@@ -240,9 +228,7 @@ int hit_sphere(
     return 1;
 }
 
-// =====================================================
-// 7. INTERSECCION RAYO-PLANO
-// =====================================================
+// INTERSECCION RAYO-PLANO
 
 int hit_plane(
     Ray ray,
@@ -276,9 +262,7 @@ int hit_plane(
     return 1;
 }
 
-// =====================================================
-// 8. GENERACION DE ESCENAS ALEATORIAS
-// =====================================================
+// GENERACION DE ESCENAS ALEATORIAS
 
 void initialize_scene(uint32_t seed) {
 
@@ -286,9 +270,8 @@ void initialize_scene(uint32_t seed) {
 
     sphere_count = NUM_SPHERES;
 
-    // -------------------------------------------------
+
     // MATERIALES ALEATORIOS
-    // -------------------------------------------------
 
     for (int i = 0; i < 6; i++) {
 
@@ -306,17 +289,13 @@ void initialize_scene(uint32_t seed) {
     materials[6].color = vec3(0.65,0.65,0.65);
     materials[6].reflectivity = 0.0;
 
-    // -------------------------------------------------
     // SUELO
-    // -------------------------------------------------
 
     ground.point = vec3(0,-1,0);
     ground.normal = vec3(0,1,0);
     ground.material_id = 6;
 
-    // -------------------------------------------------
     // ILUMINACION ALEATORIA
-    // -------------------------------------------------
 
     light.position = vec3(
         random_range(&state,-6.0,6.0),
@@ -330,9 +309,7 @@ void initialize_scene(uint32_t seed) {
         random_range(&state,0.9,1.5)
     );
 
-    // -------------------------------------------------
     // GENERACION DE LAS SEIS ESFERAS
-    // -------------------------------------------------
 
     for (int i = 0; i < NUM_SPHERES; i++) {
 
@@ -420,9 +397,7 @@ void initialize_scene(uint32_t seed) {
     );
 }
 
-// =====================================================
-// 9. BUSCAR LA INTERSECCION MAS CERCANA
-// =====================================================
+//  BUSCAR LA INTERSECCION MAS CERCANA
 
 int closest_hit(
     Ray ray,
@@ -465,9 +440,7 @@ int closest_hit(
     return found;
 }
 
-// =====================================================
-// 10. COMPROBAR SOMBRAS
-// =====================================================
+// COMPROBAR SOMBRAS
 
 int is_in_shadow(Vec3 point, Vec3 normal) {
 
@@ -492,9 +465,7 @@ int is_in_shadow(Vec3 point, Vec3 normal) {
     );
 }
 
-// =====================================================
-// 11. CIELO
-// =====================================================
+// CIELO
 
 Vec3 background_color(Ray ray) {
 
@@ -509,9 +480,7 @@ Vec3 background_color(Ray ray) {
     );
 }
 
-// =====================================================
-// 12. FUNCION PRINCIPAL DE RAY TRACING
-// =====================================================
+// FUNCION PRINCIPAL DE RAY TRACING
 
 Vec3 ray_color(Ray ray, int depth) {
 
@@ -599,9 +568,7 @@ Vec3 ray_color(Ray ray, int depth) {
     return clamp_color(local_color);
 }
 
-// =====================================================
-// 13. CAMARA
-// =====================================================
+// CAMARA
 
 Camera create_camera(
     Vec3 position,
@@ -658,9 +625,7 @@ Ray camera_ray(
     );
 }
 
-// =====================================================
-// 14. CALCULAR UN PIXEL
-// =====================================================
+// CALCULAR UN PIXEL
 
 Vec3 render_pixel(
     int x,
@@ -706,9 +671,7 @@ Vec3 render_pixel(
     );
 }
 
-// =====================================================
-// 15. GUARDAR IMAGEN PPM
-// =====================================================
+//  GUARDAR IMAGEN PPM
 
 unsigned char to_byte(double value) {
 
@@ -752,17 +715,13 @@ void save_ppm(
     fclose(file);
 }
 
-// =====================================================
-// 16. PROGRAMA PRINCIPAL SERIAL
-// =====================================================
+// PROGRAMA PRINCIPAL SERIAL
 
 int main(int argc, char *argv[]) {
 
     uint32_t seed;
 
-    // -------------------------------------------------
     // OBTENER SEMILLA
-    // -------------------------------------------------
 
     if (argc >= 2) {
 
@@ -799,9 +758,7 @@ int main(int argc, char *argv[]) {
         );
     }
 
-    // -------------------------------------------------
     // INFORMACION INICIAL
-    // -------------------------------------------------
 
     printf("====================================\n");
     printf("       RAY TRACER SERIAL\n");
@@ -812,17 +769,13 @@ int main(int argc, char *argv[]) {
     printf("Muestras por pixel: %d\n",SAMPLES);
     printf("Profundidad maxima: %d\n",MAX_DEPTH);
 
-    // -------------------------------------------------
     // GENERAR ESCENA ALEATORIA
-    // -------------------------------------------------
 
     initialize_scene(seed);
 
     printf("\nCantidad de esferas: %d\n",sphere_count);
 
-    // -------------------------------------------------
     // CAMARA
-    // -------------------------------------------------
 
     Camera camera = create_camera(
         vec3(0,3.0,12.0),
@@ -832,9 +785,7 @@ int main(int argc, char *argv[]) {
         (double)WIDTH/HEIGHT
     );
 
-    // -------------------------------------------------
     // RESERVAR MEMORIA
-    // -------------------------------------------------
 
     Vec3 *framebuffer = malloc(
         (size_t)WIDTH*HEIGHT*sizeof(Vec3)
@@ -847,15 +798,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // -------------------------------------------------
     // INICIO DE MEDICION
-    // -------------------------------------------------
 
     clock_t start = clock();
 
-    // =================================
     // BUCLE SERIAL
-    // =================================
 
     for (int y = 0; y < HEIGHT; y++) {
 
@@ -869,9 +816,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // -------------------------------------------------
     // FIN DE MEDICION
-    // -------------------------------------------------
 
     clock_t end = clock();
 
@@ -882,9 +827,7 @@ int main(int argc, char *argv[]) {
 
     printf("Tiempo serial: %.4f segundos\n",elapsed);
 
-    // -------------------------------------------------
     // GUARDAR IMAGEN
-    // -------------------------------------------------
 
     char filename[100];
 
